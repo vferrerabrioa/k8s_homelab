@@ -1,0 +1,32 @@
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: kuma-gateway
+  namespace: monitorizacion
+spec:
+  selector:
+    istio: ingressgateway # Usamos el portero principal de Istio
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "kuma.192.168.X.X.nip.io" # <-- CAMBIA ESTO POR TU IP
+---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: kuma-vs
+  namespace: monitorizacion
+spec:
+  hosts:
+  - "kuma.192.168.X.X.nip.io"   # <-- CAMBIA ESTO POR TU IP
+  gateways:
+  - kuma-gateway
+  http:
+  - route:
+    - destination:
+        host: uptime-kuma-svc   # El servicio interno de Kuma
+        port:
+          number: 80
