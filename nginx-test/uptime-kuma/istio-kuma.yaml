@@ -12,7 +12,7 @@ spec:
       name: http
       protocol: HTTP
     hosts:
-    - "kuma.192.168.X.X.nip.io" # <-- CAMBIA ESTO POR TU IP
+    - "kuma.172.20.0.127.nip.io" # <-- CAMBIA ESTO POR TU IP
 ---
 apiVersion: networking.istio.io/v1alpha3
 kind: VirtualService
@@ -21,7 +21,7 @@ metadata:
   namespace: monitorizacion
 spec:
   hosts:
-  - "kuma.192.168.X.X.nip.io"   # <-- CAMBIA ESTO POR TU IP
+  - "kuma.172.20.0.127.nip.io"   # <-- CAMBIA ESTO POR TU IP
   gateways:
   - kuma-gateway
   http:
