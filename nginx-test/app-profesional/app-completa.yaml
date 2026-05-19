@@ -1,0 +1,81 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: produccion
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: produccion
+data:
+  UI_MESSAGE: "¡Bienvenido al entorno PRO gestionado por ArgoCD!"
+  UI_COLOR: "#3498db"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-api
+  namespace: produccion
+spec:
+  replicas: 2
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      app: podinfo
+  template:
+    metadata:
+      labels:
+        app: podinfo
+    spec:
+      containers:
+      - name: podinfod
+        image: stefanprodan/podinfo:latest
+        ports:
+        - containerPort: 9898
+        env:
+        - name: PODINFO_UI_MESSAGE
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: UI_MESSAGE
+        - name: PODINFO_UI_COLOR
+          valueFrom:
+            configMapKeyRef:
+              name: app-config
+              key: UI_COLOR
+        resources:
+          requests:
+            cpu: 10m
+            memory: 32Mi
+          limits:
+            cpu: 100m
+            memory: 64Mi
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 9898
+          initialDelaySeconds: 5
+          timeoutSeconds: 5
+        readinessProbe:
+          httpGet:
+            path: /readyz
+            port: 9898
+          initialDelaySeconds: 5
+          timeoutSeconds: 5
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-svc
+  namespace: produccion
+spec:
+  selector:
+    app: podinfo
+  ports:
+  - port: 80
+    targetPort: 9898
