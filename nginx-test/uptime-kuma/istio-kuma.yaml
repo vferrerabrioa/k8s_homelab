@@ -5,12 +5,12 @@ metadata:
   namespace: monitorizacion
 spec:
   hosts:
-  - "kuma.172.20.0.127.nip.io"
+  - "*"  # <--- Esto es el "asterisco". Significa: "Acepta cualquier nombre o IP"
   gateways:
-  - produccion/app-gateway # <--- IMPORTANTE: Apuntamos al gateway que creamos al principio
+  - produccion/app-gateway # <--- Usamos el portero que ya tenías del pulpo
   http:
   - route:
     - destination:
-        host: uptime-kuma-svc.monitorizacion.svc.cluster.local # Nombre completo para evitar errores
+        host: uptime-kuma-svc # <--- El nombre de tu servicio que hemos visto en Lens
         port:
-          number: 80
+          number: 80 # <--- El puerto que hemos visto en Lens que mapea al 3001
