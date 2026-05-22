@@ -1,29 +1,22 @@
 apiVersion: v1
-kind: Namespace
-metadata:
-  name: monitorizacion
----
-apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: uptime-kuma-pvc
-  namespace: monitorizacion
+  name: kuma-data-pvc
+  namespace: kuma
 spec:
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 1Gi
+      storage: 2Gi
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: uptime-kuma
-  namespace: monitorizacion
+  namespace: kuma
 spec:
   replicas: 1
-  strategy:
-    type: Recreate
   selector:
     matchLabels:
       app: uptime-kuma
@@ -37,22 +30,11 @@ spec:
         image: louislam/uptime-kuma:1
         ports:
         - containerPort: 3001
+        # --- AQUÍ ESTÁ LA MAGIA ---
         volumeMounts:
-        - mountPath: /app/data
-          name: data-volume
+        - name: kuma-storage
+          mountPath: /app/data
       volumes:
-      - name: data-volume
+      - name: kuma-storage
         persistentVolumeClaim:
-          claimName: uptime-kuma-pvc
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: uptime-kuma-svc
-  namespace: monitorizacion
-spec:
-  selector:
-    app: uptime-kuma
-  ports:
-  - port: 80
-    targetPort: 3001
+          claimName: kuma-data-pvc
