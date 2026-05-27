@@ -1,0 +1,9 @@
+apiVersion: v2
+name: my-istiod
+description: Helm chart para el plano de control de Istio
+type: application
+version: 1.0.0
+dependencies:
+  - name: istiod
+    version: 1.18.1
+    repository: https://istio-release.storage.googleapis.com/charts
