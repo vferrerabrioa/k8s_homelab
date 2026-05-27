@@ -1,0 +1,9 @@
+apiVersion: v2
+name: istio-base
+description: Helm chart para los CRDs de Istio en mi homelab
+type: application
+version: 1.0.0
+dependencies:
+  - name: base
+    version: 1.18.1
+    repository: https://istio-release.storage.googleapis.com/charts
